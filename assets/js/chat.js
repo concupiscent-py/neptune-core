@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     // --- PROTECTION PAR CODE PIN (MODALE ESTHÉTIQUE) ---
-    const correctPin = '6615'; // Change ici ton code secret à 4 chiffres si besoin
+    const correctPin = '6615'; // Code secret à 4 chiffres
 
     // On vérifie si l'utilisateur est déjà authentifié pour cette session
     if (sessionStorage.getItem('neptune_chat_auth') !== 'true') {
@@ -41,6 +41,32 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         return;
     }
+    // --------------------------------------------------
+
+    // --- STYLE CSS MODERNE POUR LA SCROLLBAR ---
+    const customScrollStyle = document.createElement('style');
+    customScrollStyle.innerHTML = `
+        #neptune-chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        #neptune-chat-messages::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        #neptune-chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(0, 210, 255, 0.3);
+            border-radius: 10px;
+            transition: background 0.2s ease;
+        }
+        #neptune-chat-messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 210, 255, 0.6);
+        }
+        #neptune-chat-messages {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 210, 255, 0.3) transparent;
+        }
+    `;
+    document.head.appendChild(customScrollStyle);
     // --------------------------------------------------
 
     const chatBox = document.getElementById('neptune-chat-messages');
@@ -172,23 +198,53 @@ document.addEventListener('DOMContentLoaded', function () {
         div.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
         const time = msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
         
-        let parsedText = escapeHtml(msg.text);
-
+        let parsedText = msg.text;
         const naviStickerHtml = `<img src="${naviUrl}" alt="Navi" class="neptune-chat-sticker" style="width: 28px; height: 28px; vertical-align: middle; display: inline-block;" />`;
         const marseyStickerHtml = `<img src="${marseyUrl}" alt="Marsey" class="neptune-chat-sticker" style="width: 28px; height: 28px; vertical-align: middle; display: inline-block;" />`;
         
-        // Remplacement du tag court [whosbro:pseudo] par le texte système et l'image GIF
+        // Formattage des tags système / images / actions
         parsedText = parsedText.replace(/\[whosbro:(.*?)\]/g, (match, p1) => {
             return `<span style="color:#00d2ff; font-style:italic;">[Système] Regardez ${escapeHtml(p1)} :</span><br><img src="${whosbroUrl}" alt="whosbro" style="max-width: 200px; border-radius: 8px; border: 1px solid #30363d; margin-top: 6px; display: block;" />`;
         });
 
+        parsedText = parsedText.replace(/\[guide_ui\]/g, () => {
+            return `<div style="background: #161b22; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-top: 6px;">
+                <strong style="color: #00d2ff; display: block; margin-bottom: 6px;">📖 Guide complet des commandes :</strong>
+                <ul style="margin: 0; padding-left: 18px; color: #c9d1d9; font-size: 13px; line-height: 1.5;">
+                    <li><code>/pseudo [nom]</code> ou <code>/nick [nom]</code> : Change ton pseudo.</li>
+                    <li><code>/avatar [url]</code> ou <code>/pfp [url]</code> : Change ton avatar.</li>
+                    <li><code>/join [salon]</code> : Change de salon de discussion.</li>
+                    <li><code>/clear</code> : Efface l'historique du salon actuel.</li>
+                    <li><code>/whosbro [pseudo]</code> ou <code>/rdm [pseudo]</code> : Affiche le GIF personnalisé.</li>
+                    <li><code>/tp wpd</code> : Téléporte / redirige vers un lien fixe.</li>
+                    <li><code>/rdm tp</code> : Téléporte vers un lien aléatoire rigolo !</li>
+                    <li><code>/musique [url]</code> : Partage un lien de musique cliquable.</li>
+                    <li><code>/me [action]</code> : Envoie une action textuelle.</li>
+                    <li><code>/roll [max]</code> : Tire un dé aléatoire (ex: /roll 50).</li>
+                    <li><code>/flip</code> ou <code>/coin</code> : Pile ou face.</li>
+                    <li><code>/slap [pseudo]</code> : Donne une claque virtuelle.</li>
+                    <li><code>/hug [pseudo]</code> : Fait un câlin virtuel.</li>
+                    <li><code>/afk [raison]</code> : Signale ton absence.</li>
+                    <li><code>/time</code> : Affiche l'heure exacte.</li>
+                    <li><code>/ping</code> : Teste la latence.</li>
+                    <li><code>/guide</code> : Affiche ce panneau d'aide.</li>
+                    <li><code>/wdp</code> ou <code>/gay</code> : Active les effets visuels spéciaux.</li>
+                </ul>
+            </div>`;
+        });
+
+        if (!parsedText.includes('<img') && !parsedText.includes('[Système]') && !parsedText.includes('guide_ui') && !parsedText.includes('div') && !parsedText.includes('audio') && !parsedText.includes('<a ')) {
+            parsedText = escapeHtml(parsedText);
+        }
+
         parsedText = parsedText.replace(/\[navi\]/g, naviStickerHtml);
         parsedText = parsedText.replace(/\[marsey\]/g, marseyStickerHtml);
 
-        const msgAvatar = (msg.pseudonym === currentPseudo) ? currentAvatar : defaultAvatarUrl;
+        const msgAuthor = msg.pseudonym || currentPseudo;
+        const msgAvatar = (msgAuthor === currentPseudo) ? currentAvatar : defaultAvatarUrl;
 
         let deleteBtnHtml = '';
-        if (msg.pseudonym === currentPseudo) {
+        if (msgAuthor === currentPseudo) {
             deleteBtnHtml = `<button type="button" class="neptune-delete-msg-btn" data-id="${msg.id}" style="background: transparent; border: none; color: #ff5555; cursor: pointer; font-size: 11px; margin-left: 8px;" title="Supprimer ce message">🗑️ Supprimer</button>`;
         }
 
@@ -197,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <img src="${msgAvatar}" alt="Avatar" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin-top: 2px;" />
                 <div style="flex-grow: 1;">
                     <span style="color:#888;">[${time}]</span>
-                    <strong style="color:#00d2ff;">${escapeHtml(msg.pseudonym)} :</strong>
+                    <strong style="color:#00d2ff;">${escapeHtml(msgAuthor)} :</strong>
                     <span>${parsedText}</span>${deleteBtnHtml}
                 </div>
             </div>
@@ -284,6 +340,51 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // --- COMMANDE : /rdm tp (Redirection vers un lien aléatoire rigolo) ---
+        if (lowerText === '/rdm tp' || lowerText === '/rdmtp') {
+            chatInput.value = '';
+            
+            const randomUrls = [
+                'https://fr.wikipedia.org/wiki/Sp%C3%A9cial:Au_hasard',
+                'https://thezen.zone/',
+                'https://pointerpointer.com/',
+                'https://cat-bounce.com/',
+                'https://longdogechallenge.com/',
+                'https://neal.fun/'
+            ];
+            
+            const randomIndex = Math.floor(Math.random() * randomUrls.length);
+            const selectedUrl = randomUrls[randomIndex];
+            
+            window.open(selectedUrl, '_blank');
+            return;
+        }
+
+        // --- COMMANDE : /tp wpd (Redirection vers un lien fixe) ---
+        if (lowerText === '/tp wpd' || lowerText === '/tpwpd') {
+            chatInput.value = '';
+            const targetUrl = 'https://exemple.com'; 
+            window.open(targetUrl, '_blank');
+            return;
+        }
+
+        // --- COMMANDE : /musique ou /music [url] ---
+        if (lowerText.startsWith('/musique') || lowerText.startsWith('/music')) {
+            const musicUrl = text.replace(/^\/(musique|music)\s*/i, '').trim();
+            if (musicUrl) {
+                const musicHtml = `<a href="${musicUrl}" target="_blank" style="color: #ff7700; font-weight: bold; text-decoration: underline;">🎧 Écouter le son (SoundCloud / Autre)</a>`;
+                const msg = `partage une musique : ${musicHtml}`;
+
+                fetch(`${neptuneSettings.restUrl}chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': neptuneSettings.nonce },
+                    body: JSON.stringify({ room: currentRoom, text: msg, pseudonym: currentPseudo })
+                }).then(() => { chatInput.value = ''; loadMessages(); });
+            }
+            chatInput.value = '';
+            return;
+        }
+
         // 4. Commande de changement de salon (/join)
         if (lowerText.startsWith('/join ')) {
             const newRoom = text.replace('/join ', '').trim();
@@ -314,11 +415,10 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // 6. Commande : /whosbro ou /rdm [pseudo] sécurisée
+        // 6. Commande : /whosbro ou /rdm [pseudo] pour afficher l'image persistante
         if (lowerText.startsWith('/whosbro ') || lowerText.startsWith('/rdm ')) {
             const targetUser = text.replace(/^\/(whosbro|rdm)\s+/, '').trim();
             if (targetUser) {
-                // On envoie un tag court propre qui passera l'API REST sans être bloqué
                 const commandMessage = `[whosbro:${targetUser}]`;
                 
                 fetch(`${neptuneSettings.restUrl}chat`, {
@@ -343,6 +443,129 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .catch(err => console.error('Erreur :', err));
             }
+            return;
+        }
+
+        // --- COMMANDES CACHÉES INTÉGRÉES ---
+
+        // Commande /guide
+        if (lowerText === '/guide') {
+            fetch(`${neptuneSettings.restUrl}chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': neptuneSettings.nonce },
+                body: JSON.stringify({ room: currentRoom, text: '[guide_ui]', pseudonym: 'Système' })
+            }).then(() => { chatInput.value = ''; loadMessages(); });
+            return;
+        }
+
+        // Commande /me
+        if (lowerText.startsWith('/me ')) {
+            const actionText = text.replace(/^\/me\s+/, '').trim();
+            if (actionText) {
+                const msg = `<span style="color: #ff7b72; font-style: italic;">* ${escapeHtml(currentPseudo)} ${escapeHtml(actionText)} *</span>`;
+                fetch(`${neptuneSettings.restUrl}chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': neptuneSettings.nonce },
+                    body: JSON.stringify({ room: currentRoom, text: msg, pseudonym: '' })
+                }).then(() => { chatInput.value = ''; loadMessages(); });
+            }
+            return;
+        }
+
+        // Commande /roll
+        if (lowerText.startsWith('/roll')) {
+            const arg = text.replace(/^\/roll\s*/, '').trim();
+            let max = parseInt(arg, 10);
+            if (isNaN(max) || max <= 0) max = 100;
+            const res = Math.floor(Math.random() * max) + 1;
+            const msg = `<span style="color: #d2a8ff; font-weight: bold;">🎲 ${escapeHtml(currentPseudo)} a lancé un dé (1-${max}) : ${res}</span>`;
+            fetch(`${neptuneSettings.restUrl}chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': neptuneSettings.nonce },
+                body: JSON.stringify({ room: currentRoom, text: msg, pseudonym: '' })
+            }).then(() => { chatInput.value = ''; loadMessages(); });
+            return;
+        }
+
+        // Commande /flip
+        if (lowerText === '/flip' || lowerText === '/coin') {
+            const res = Math.random() < 0.5 ? '🪙 Pile !' : '🪙 Face !';
+            const msg = `<span style="color: #e3b341; font-weight: bold;">${escapeHtml(currentPseudo)} a lancé une pièce : ${res}</span>`;
+            fetch(`${neptuneSettings.restUrl}chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': neptuneSettings.nonce },
+                body: JSON.stringify({ room: currentRoom, text: msg, pseudonym: '' })
+            }).then(() => { chatInput.value = ''; loadMessages(); });
+            return;
+        }
+
+        // Commande /slap
+        if (lowerText.startsWith('/slap ')) {
+            const target = text.replace(/^\/slap\s+/, '').trim();
+            if (target) {
+                const msg = `<span style="color: #ff7b72; font-style: italic;">👋 ${escapeHtml(currentPseudo)} donne une claque à ${escapeHtml(target)} ! Ouch !</span>`;
+                fetch(`${neptuneSettings.restUrl}chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': neptuneSettings.nonce },
+                    body: JSON.stringify({ room: currentRoom, text: msg, pseudonym: '' })
+                }).then(() => { chatInput.value = ''; loadMessages(); });
+            }
+            return;
+        }
+
+        // Commande /hug
+        if (lowerText.startsWith('/hug ')) {
+            const target = text.replace(/^\/hug\s+/, '').trim();
+            if (target) {
+                const msg = `<span style="color: #f778ba; font-style: italic;">🤗 ${escapeHtml(currentPseudo)} fait un gros câlin chaleureux à ${escapeHtml(target)} ! ❤️</span>`;
+                fetch(`${neptuneSettings.restUrl}chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': neptuneSettings.nonce },
+                    body: JSON.stringify({ room: currentRoom, text: msg, pseudonym: '' })
+                }).then(() => { chatInput.value = ''; loadMessages(); });
+            }
+            return;
+        }
+
+        // Commande /afk
+        if (lowerText.startsWith('/afk')) {
+            const reason = text.replace(/^\/afk\s*/, '').trim() || 'Absent';
+            const msg = `<span style="color: #ffa657; font-style: italic;">💤 ${escapeHtml(currentPseudo)} est maintenant absent (AFK) : ${escapeHtml(reason)}</span>`;
+            fetch(`${neptuneSettings.restUrl}chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': neptuneSettings.nonce },
+                body: JSON.stringify({ room: currentRoom, text: msg, pseudonym: '' })
+            }).then(() => { chatInput.value = ''; loadMessages(); });
+            return;
+        }
+
+        // Commande /time
+        if (lowerText === '/time') {
+            const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const msg = `<span style="color: #79c0ff; font-style: italic;">⏰ Heure actuelle : ${now}</span>`;
+            fetch(`${neptuneSettings.restUrl}chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': neptuneSettings.nonce },
+                body: JSON.stringify({ room: currentRoom, text: msg, pseudonym: 'Système' })
+            }).then(() => { chatInput.value = ''; loadMessages(); });
+            return;
+        }
+
+        // Commande /ping
+        if (lowerText === '/ping') {
+            const start = performance.now();
+            fetch(`${neptuneSettings.restUrl}chat?room=${encodeURIComponent(currentRoom)}`, {
+                headers: { 'X-WP-Nonce': neptuneSettings.nonce }
+            }).then(() => {
+                const latency = Math.round(performance.now() - start);
+                const msg = `<span style="color: #7ee787; font-style: italic;">🏓 Pong ! Latence : ${latency}ms</span>`;
+                fetch(`${neptuneSettings.restUrl}chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': neptuneSettings.nonce },
+                    body: JSON.stringify({ room: currentRoom, text: msg, pseudonym: 'Système' })
+                }).then(() => { chatInput.value = ''; loadMessages(); });
+            });
+            chatInput.value = '';
             return;
         }
 
