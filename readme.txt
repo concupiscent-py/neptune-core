@@ -5,8 +5,8 @@ Requires at least: 5.8
 Tested up to: 7.1
 License: GPLv2+
 
-Secure plugin featuring dark-mode, custom avatar, multi-room chat, and styled pages.
+Secure plugin featuring dark-mode, custom avatar, multi-room chat, and styled pages ( very styled)
 
 == Description ==
 
-Neptune Core is a secure WordPress plugin designed to provide an immersive dark-mode user experience, complete with a multi-room live chat system and styled custom pages.
+Neptune Core is a secure WordPress plugin designed to provide an immersive dark-mode user experience, complete with a multi-room live chat system and styled custom pages ( try /rdm + unsername of a peapole).
