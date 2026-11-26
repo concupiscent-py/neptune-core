@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- PROTECTION PAR CODE PIN (MODALE ESTHÉTIQUE) ---
     const correctPin = '6615'; // Change ici ton code secret à 4 chiffres si besoin
 
+    // On vérifie si l'utilisateur est déjà authentifié pour cette session
     if (sessionStorage.getItem('neptune_chat_auth') !== 'true') {
-        // Création de l'overlay de verrouillage
         const lockOverlay = document.createElement('div');
         lockOverlay.id = 'neptune-lock-overlay';
         lockOverlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 10, 15, 0.95); z-index: 999999; display: flex; justify-content: center; align-items: center; font-family: inherit;';
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 pinInput.focus();
             }
         });
-        return; // Stoppe le chargement du chat tant que ce n'est pas déverrouillé
+        return;
     }
     // --------------------------------------------------
 
@@ -51,6 +51,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!chatForm || !chatBox || !chatInput) return;
 
     let currentRoom = 'general';
+    let currentPseudo = sessionStorage.getItem('neptune_chat_pseudo') || neptuneSettings.userPseudo || 'Membre';
+    
+    const defaultAvatarUrl = `${neptuneSettings.pluginUrl}assets/images/avatar.jpg`;
+    let currentAvatar = sessionStorage.getItem('neptune_chat_avatar') || defaultAvatarUrl;
 
     const naviUrl = `${neptuneSettings.pluginUrl}assets/images/navi.png`;
     const marseyUrl = `${neptuneSettings.pluginUrl}assets/images/marsey.png`;
@@ -168,22 +172,27 @@ document.addEventListener('DOMContentLoaded', function () {
         const time = msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
         
         let parsedText = escapeHtml(msg.text);
-        const naviStickerHtml = `<img src="${naviUrl}" alt="Navi" class="neptune-chat-sticker" />`;
-        const marseyStickerHtml = `<img src="${marseyUrl}" alt="Marsey" class="neptune-chat-sticker" />`;
+        const naviStickerHtml = `<img src="${naviUrl}" alt="Navi" class="neptune-chat-sticker" style="width: 28px; height: 28px; vertical-align: middle; display: inline-block;" />`;
+        const marseyStickerHtml = `<img src="${marseyUrl}" alt="Marsey" class="neptune-chat-sticker" style="width: 28px; height: 28px; vertical-align: middle; display: inline-block;" />`;
         
         parsedText = parsedText.replace(/\[navi\]/g, naviStickerHtml);
         parsedText = parsedText.replace(/\[marsey\]/g, marseyStickerHtml);
 
+        const msgAvatar = (msg.pseudonym === currentPseudo) ? currentAvatar : defaultAvatarUrl;
+
         let deleteBtnHtml = '';
-        if (msg.pseudonym === (neptuneSettings.userPseudo || 'Membre')) {
+        if (msg.pseudonym === currentPseudo) {
             deleteBtnHtml = `<button type="button" class="neptune-delete-msg-btn" data-id="${msg.id}" style="background: transparent; border: none; color: #ff5555; cursor: pointer; font-size: 11px; margin-left: 8px;" title="Supprimer ce message">🗑️ Supprimer</button>`;
         }
 
         div.innerHTML = `
-            <div>
-                <span style="color:#888;">[${time}]</span>
-                <strong style="color:#00d2ff;">${escapeHtml(msg.pseudonym)} :</strong>
-                <span>${parsedText}</span>${deleteBtnHtml}
+            <div style="display: flex; align-items: flex-start; gap: 8px;">
+                <img src="${msgAvatar}" alt="Avatar" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; margin-top: 2px;" />
+                <div style="flex-grow: 1;">
+                    <span style="color:#888;">[${time}]</span>
+                    <strong style="color:#00d2ff;">${escapeHtml(msg.pseudonym)} :</strong>
+                    <span>${parsedText}</span>${deleteBtnHtml}
+                </div>
             </div>
         `;
 
@@ -221,6 +230,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const lowerText = text.toLowerCase();
 
+        // 1. Commande : Changer de pseudo (/pseudo ou /nick)
+        if (lowerText.startsWith('/pseudo ') || lowerText.startsWith('/nick ')) {
+            const newPseudo = text.replace(/^\/(pseudo|nick)\s+/, '').trim();
+            if (newPseudo) {
+                currentPseudo = newPseudo;
+                sessionStorage.setItem('neptune_chat_pseudo', currentPseudo);
+                
+                const sysDiv = document.createElement('div');
+                sysDiv.className = 'neptune-chat-message';
+                sysDiv.innerHTML = `<span style="color:#00d2ff; font-style:italic;">[Système] Votre pseudo est désormais : ${escapeHtml(currentPseudo)}</span>`;
+                chatBox.appendChild(sysDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+            chatInput.value = '';
+            return;
+        }
+
+        // 2. Commande : Changer d'avatar (/avatar ou /pfp)
+        if (lowerText.startsWith('/avatar ') || lowerText.startsWith('/pfp ')) {
+            const newAvatarUrl = text.replace(/^\/(avatar|pfp)\s+/, '').trim();
+            if (newAvatarUrl) {
+                currentAvatar = newAvatarUrl;
+                sessionStorage.setItem('neptune_chat_avatar', currentAvatar);
+                
+                const sysDiv = document.createElement('div');
+                sysDiv.className = 'neptune-chat-message';
+                sysDiv.innerHTML = `<span style="color:#00d2ff; font-style:italic;">[Système] Votre photo de profil a été mise à jour !</span>`;
+                chatBox.appendChild(sysDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+            chatInput.value = '';
+            return;
+        }
+
+        // 3. Commandes d'effets visuels (Sang / Gay)
         if (lowerText === 'wdp' || lowerText === '/wdp' || lowerText === '/wpd') {
             triggerBloodEffect();
             chatInput.value = '';
@@ -233,6 +277,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // 4. Commande de changement de salon (/join)
         if (lowerText.startsWith('/join ')) {
             const newRoom = text.replace('/join ', '').trim();
             if (newRoom) {
@@ -244,6 +289,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // 5. Commande de nettoyage de salon (/clear)
         if (lowerText === '/clear') {
             fetch(`${neptuneSettings.restUrl}chat?room=${encodeURIComponent(currentRoom)}`, {
                 method: 'DELETE',
@@ -261,6 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // 6. Envoi d'un message classique
         fetch(`${neptuneSettings.restUrl}chat`, {
             method: 'POST',
             headers: { 
@@ -270,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
             body: JSON.stringify({ 
                 room: currentRoom, 
                 text: text, 
-                pseudonym: neptuneSettings.userPseudo || 'Membre' 
+                pseudonym: currentPseudo 
             })
         })
         .then(response => {

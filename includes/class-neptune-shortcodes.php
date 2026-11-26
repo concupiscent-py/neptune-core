@@ -1,8 +1,15 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Classe de gestion des shortcodes du plugin Neptune Core.
+ * Gère l'affichage des différentes pages thématiques et du chat protégé.
+ */
 class Neptune_Shortcodes {
 
+    /**
+     * Initialisation des shortcodes du plugin.
+     */
     public function init() {
         add_shortcode( 'neptune_chat', array( $this, 'render_chat_shortcode' ) );
         add_shortcode( 'neptune_home', array( $this, 'render_home_template' ) );
@@ -10,7 +17,11 @@ class Neptune_Shortcodes {
         add_shortcode( 'neptune_about', array( $this, 'render_about_template' ) );
     }
 
+    /**
+     * Rendu du shortcode du chat avec protection intégrée et affichage sécurisé.
+     */
     public function render_chat_shortcode( $atts ) {
+        // Vérification de connexion WordPress de base requise pour le chat
         if ( ! is_user_logged_in() ) {
             return '<p style="color: #fff; text-align: center; padding: 20px;">Veuillez vous connecter pour accéder au chat Neptune.</p>';
         }
@@ -38,6 +49,9 @@ class Neptune_Shortcodes {
         return ob_get_clean();
     }
 
+    /**
+     * Rendu de la page d'accueil personnalisée Neptune.
+     */
     public function render_home_template( $atts ) {
         $avatar_url = plugin_dir_url( dirname( __FILE__ ) ) . 'assets/images/avatar.jpg';
 
@@ -73,6 +87,9 @@ class Neptune_Shortcodes {
         return ob_get_clean();
     }
 
+    /**
+     * Rendu de la galerie des visuels officiels de la plateforme.
+     */
     public function render_gallery_template( $atts ) {
         $bg_url = plugin_dir_url( dirname( __FILE__ ) ) . 'assets/images/background.jpg';
         $chat_bg_url = plugin_dir_url( dirname( __FILE__ ) ) . 'assets/images/chat-bg.jpg';
@@ -105,6 +122,9 @@ class Neptune_Shortcodes {
         return ob_get_clean();
     }
 
+    /**
+     * Rendu de la page À propos avec les motifs sombres caractéristiques.
+     */
     public function render_about_template( $atts ) {
         $about_img_url = plugin_dir_url( dirname( __FILE__ ) ) . 'assets/images/about.jpg';
 
