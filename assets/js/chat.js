@@ -8,18 +8,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let currentRoom = 'general';
 
-    // URL du sticker personnalisé basé sur l'URL du plugin
-    const stickerUrl = `${neptuneSettings.pluginUrl}assets/images/marsey.png`;
+    const naviUrl = `${neptuneSettings.pluginUrl}assets/images/navi.png`;
+    const marseyUrl = `${neptuneSettings.pluginUrl}assets/images/marsey.png`;
 
-    // Création de la barre d'émojis / stickers au-dessus du formulaire de chat
     const emojiBar = document.createElement('div');
     emojiBar.className = 'neptune-emoji-bar';
     emojiBar.style.cssText = 'display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap;';
 
-    // Liste des émojis de base
     const emojis = ['👍', '❤️', '🔥', '😂', '⭐'];
 
-    // Ajout des émojis classiques
     emojis.forEach(emo => {
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -32,30 +29,46 @@ document.addEventListener('DOMContentLoaded', function () {
         emojiBar.appendChild(btn);
     });
 
-    // Ajout du bouton pour le sticker Marsey personnalisé
-    const stickerBtn = document.createElement('button');
-    stickerBtn.type = 'button';
-    stickerBtn.title = 'Sticker Marsey';
-    stickerBtn.style.cssText = 'background: transparent; border: 1px solid #00d2ff; cursor: pointer; padding: 2px 6px; border-radius: 4px; display: flex; align-items: center;';
+    const naviBtn = document.createElement('button');
+    naviBtn.type = 'button';
+    naviBtn.title = 'Sticker Navi';
+    naviBtn.style.cssText = 'background: transparent; border: 1px solid #00d2ff; cursor: pointer; padding: 2px 6px; border-radius: 4px; display: flex; align-items: center;';
     
-    const stickerImg = document.createElement('img');
-    stickerImg.src = stickerUrl;
-    stickerImg.alt = 'Marsey';
-    stickerImg.style.width = '24px';
-    stickerImg.style.height = '24px';
-    stickerImg.style.objectFit = 'contain';
+    const naviImg = document.createElement('img');
+    naviImg.src = naviUrl;
+    naviImg.alt = 'Navi';
+    naviImg.style.width = '24px';
+    naviImg.style.height = '24px';
+    naviImg.style.objectFit = 'contain';
     
-    stickerBtn.appendChild(stickerImg);
-    stickerBtn.addEventListener('click', () => {
+    naviBtn.appendChild(naviImg);
+    naviBtn.addEventListener('click', () => {
+        chatInput.value += '[navi]';
+        chatInput.focus();
+    });
+    emojiBar.appendChild(naviBtn);
+
+    const marseyBtn = document.createElement('button');
+    marseyBtn.type = 'button';
+    marseyBtn.title = 'Sticker Marsey';
+    marseyBtn.style.cssText = 'background: transparent; border: 1px solid #00d2ff; cursor: pointer; padding: 2px 6px; border-radius: 4px; display: flex; align-items: center;';
+    
+    const marseyImg = document.createElement('img');
+    marseyImg.src = marseyUrl;
+    marseyImg.alt = 'Marsey';
+    marseyImg.style.width = '24px';
+    marseyImg.style.height = '24px';
+    marseyImg.style.objectFit = 'contain';
+    
+    marseyBtn.appendChild(marseyImg);
+    marseyBtn.addEventListener('click', () => {
         chatInput.value += '[marsey]';
         chatInput.focus();
     });
-    emojiBar.appendChild(stickerBtn);
+    emojiBar.appendChild(marseyBtn);
 
-    // Insérer la barre d'outils juste avant le formulaire
     chatForm.parentNode.insertBefore(emojiBar, chatForm);
 
-    // S'assure que l'overlay de sang existe dès le chargement
     let bloodOverlay = document.getElementById('neptune-blood-overlay');
     if (!bloodOverlay) {
         bloodOverlay = document.createElement('div');
@@ -63,7 +76,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.appendChild(bloodOverlay);
     }
 
-    // S'assure que l'overlay arc-en-ciel existe dès le chargement
     let rainbowOverlay = document.getElementById('neptune-rainbow-overlay');
     if (!rainbowOverlay) {
         rainbowOverlay = document.createElement('div');
@@ -71,7 +83,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.appendChild(rainbowOverlay);
     }
 
-    // Fonction pour déclencher l'effet visuel de sang
     function triggerBloodEffect() {
         if (!bloodOverlay) return;
         bloodOverlay.classList.add('active');
@@ -80,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 3000);
     }
 
-    // Fonction pour déclencher l'effet multicolore (/gay)
     function triggerRainbowEffect() {
         if (!rainbowOverlay) return;
         rainbowOverlay.classList.add('active');
@@ -112,12 +122,13 @@ document.addEventListener('DOMContentLoaded', function () {
         div.className = 'neptune-chat-message';
         const time = msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
         
-        // Sécurisation du texte et conversion du raccourci [marsey] en image de sticker
         let parsedText = escapeHtml(msg.text);
-        const renderedStickerHtml = `<img src="${stickerUrl}" alt="Marsey" style="width: 28px; height: 28px; vertical-align: middle; display: inline-block;" />`;
-        parsedText = parsedText.replace(/\[marsey\]/g, renderedStickerHtml);
+        const naviStickerHtml = `<img src="${naviUrl}" alt="Navi" class="neptune-chat-sticker" />`;
+        const marseyStickerHtml = `<img src="${marseyUrl}" alt="Marsey" class="neptune-chat-sticker" />`;
+        
+        parsedText = parsedText.replace(/\[navi\]/g, naviStickerHtml);
+        parsedText = parsedText.replace(/\[marsey\]/g, marseyStickerHtml);
 
-        // Bouton de suppression affiché uniquement si le message appartient à l'utilisateur actuel
         let deleteBtnHtml = '';
         if (msg.pseudonym === (neptuneSettings.userPseudo || 'Membre')) {
             deleteBtnHtml = `<button type="button" class="neptune-delete-msg-btn" data-id="${msg.id}" style="background: transparent; border: none; color: #ff5555; cursor: pointer; font-size: 11px; margin-left: 8px;" title="Supprimer ce message">🗑️ Supprimer</button>`;
@@ -131,7 +142,6 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
         `;
 
-        // Écouteur pour supprimer un message individuel
         const delBtn = div.querySelector('.neptune-delete-msg-btn');
         if (delBtn) {
             delBtn.addEventListener('click', () => {
@@ -144,7 +154,6 @@ document.addEventListener('DOMContentLoaded', function () {
         chatBox.appendChild(div);
     }
 
-    // Fonction pour supprimer un seul message via l'API REST
     function deleteSingleMessage(messageId) {
         fetch(`${neptuneSettings.restUrl}chat?id=${messageId}`, {
             method: 'DELETE',
@@ -165,21 +174,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const lowerText = text.toLowerCase();
 
-        // 1. Interception : Effet de sang (wdp, /wdp, /wpd)
         if (lowerText === 'wdp' || lowerText === '/wdp' || lowerText === '/wpd') {
             triggerBloodEffect();
             chatInput.value = '';
             return;
         }
 
-        // 2. Interception : Effet multicolore (/gay)
         if (lowerText === '/gay') {
             triggerRainbowEffect();
             chatInput.value = '';
             return;
         }
 
-        // 3. Interception de la commande /join
         if (lowerText.startsWith('/join ')) {
             const newRoom = text.replace('/join ', '').trim();
             if (newRoom) {
@@ -191,7 +197,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // 4. Interception de la commande /clear pour effacer les messages
         if (lowerText === '/clear') {
             fetch(`${neptuneSettings.restUrl}chat?room=${encodeURIComponent(currentRoom)}`, {
                 method: 'DELETE',
@@ -209,7 +214,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // 5. Envoi du message classique via l'API REST
         fetch(`${neptuneSettings.restUrl}chat`, {
             method: 'POST',
             headers: { 

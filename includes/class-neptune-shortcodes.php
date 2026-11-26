@@ -56,11 +56,11 @@ class Neptune_Shortcodes {
                     <p>Rejoignez le salon général ou créez votre propre espace de discussion en un clin d'œil avec la commande <code>/join</code>.</p>
                 </div>
                 <div class="neptune-feature-card">
-                    <h3>🌙 Dark Mode Immersif</h3>
+                    <h3>🌙 delice pour les yeux</h3>
                     <p>Une interface entièrement pensée pour le confort visuel, aux tons profonds et élégants.</p>
                 </div>
                 <div class="neptune-feature-card">
-                    <h3>🎵 Espace Musical</h3>
+                    <h3>🎵 Espace Musical chill</h3>
                     <p>Un coin dédié à vos ambiances sonores et intégrations pour vibrer au rythme de 180 bpm avec fuck leeche sur spotify.</p>
                 </div>
             </div>
@@ -118,7 +118,7 @@ class Neptune_Shortcodes {
                 <div class="neptune-about-image-wrapper" style="margin-bottom: 25px;">
                     <img src="<?php echo esc_url( $about_img_url ); ?>" alt="À propos de Neptune" class="neptune-about-img" style="max-width: 100%; border-radius: 8px;" />
                 </div>
-                <p>Neptune Core est né de la volonté de créer un espace web intimiste, sombre et hautement interactif. Conçu sur-mesure pour s'affranchir des regles, il fusionne esthétique et communication en temps réel anonime.</p>
+                <p>Neptune Core est né de la volonté de créer un espace web intimiste, sombre et hautement interactif. Conçu sur-mesure pour s'affranchir des regles, il fusionne esthétique et communication en temps réel.</p>
                 <p>Rejoignez la communauté, discutez dans les salons isolés et profitez d'une expérience visuelle soignée comme donk XD.</p>
             </div>
         </div>
