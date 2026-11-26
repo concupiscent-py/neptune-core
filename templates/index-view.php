@@ -1,9 +1,9 @@
 <?php
 defined('ABSPATH') || exit;
-$asset_url = NEPTUNE_PLUGIN_URL . 'assets/';
+$neptune_asset_url = NEPTUNE_PLUGIN_URL . 'assets/';
 ?>
 
-<img class="portrait" src="<?php echo esc_url($asset_url . 'img/portrait.jpg'); ?>" alt="Portrait en noir et blanc">
+<img class="portrait" src="<?php echo esc_url($neptune_asset_url . 'img/portrait.jpg'); ?>" alt="Portrait en noir et blanc">
 
 <div data-site-header></div>
 

@@ -1,4 +1,48 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // --- PROTECTION PAR CODE PIN (MODALE ESTHÉTIQUE) ---
+    const correctPin = '6615'; // Change ici ton code secret à 4 chiffres si besoin
+
+    if (sessionStorage.getItem('neptune_chat_auth') !== 'true') {
+        // Création de l'overlay de verrouillage
+        const lockOverlay = document.createElement('div');
+        lockOverlay.id = 'neptune-lock-overlay';
+        lockOverlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(10, 10, 15, 0.95); z-index: 999999; display: flex; justify-content: center; align-items: center; font-family: inherit;';
+
+        lockOverlay.innerHTML = `
+            <div style="background: #161b22; border: 1px solid #30363d; padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.5); width: 320px;">
+                <h3 style="color: #00d2ff; margin-top: 0; margin-bottom: 10px; font-size: 20px;">🔒 Salon Protégé</h3>
+                <p style="color: #8b949e; font-size: 14px; margin-bottom: 20px;">Entrez le code à 4 chiffres pour accéder au chat Neptune.</p>
+                <form id="neptune-pin-form">
+                    <input type="password" id="neptune-pin-input" maxlength="4" placeholder="••••" style="background: #0d1117; border: 1px solid #30363d; color: #fff; font-size: 24px; text-align: center; letter-spacing: 8px; padding: 10px; width: 150px; border-radius: 6px; outline: none; margin-bottom: 15px;" autofocus />
+                    <br>
+                    <button type="submit" style="background: #00d2ff; color: #0d1117; border: none; font-weight: bold; padding: 10px 20px; border-radius: 6px; cursor: pointer; width: 100%; font-size: 14px;">Déverrouiller</button>
+                </form>
+                <p id="neptune-pin-error" style="color: #ff5555; font-size: 12px; margin-top: 10px; display: none;">Code incorrect, réessayez.</p>
+            </div>
+        `;
+        document.body.appendChild(lockOverlay);
+
+        const pinForm = document.getElementById('neptune-pin-form');
+        const pinInput = document.getElementById('neptune-pin-input');
+        const pinError = document.getElementById('neptune-pin-error');
+
+        pinForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (pinInput.value === correctPin) {
+                sessionStorage.setItem('neptune_chat_auth', 'true');
+                lockOverlay.style.opacity = '0';
+                lockOverlay.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => lockOverlay.remove(), 300);
+            } else {
+                pinError.style.display = 'block';
+                pinInput.value = '';
+                pinInput.focus();
+            }
+        });
+        return; // Stoppe le chargement du chat tant que ce n'est pas déverrouillé
+    }
+    // --------------------------------------------------
+
     const chatBox = document.getElementById('neptune-chat-messages');
     const chatForm = document.getElementById('neptune-chat-form');
     const chatInput = document.getElementById('neptune-chat-input');
@@ -120,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function appendMessage(msg) {
         const div = document.createElement('div');
         div.className = 'neptune-chat-message';
+        div.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
         const time = msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
         
         let parsedText = escapeHtml(msg.text);
@@ -145,9 +190,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const delBtn = div.querySelector('.neptune-delete-msg-btn');
         if (delBtn) {
             delBtn.addEventListener('click', () => {
-                if (confirm('Voulez-vous vraiment supprimer ce message ?')) {
+                div.style.opacity = '0';
+                div.style.transform = 'scale(0.95)';
+                setTimeout(() => {
                     deleteSingleMessage(msg.id);
-                }
+                }, 200);
             });
         }
 
