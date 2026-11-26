@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const naviUrl = `${neptuneSettings.pluginUrl}assets/images/navi.png`;
     const marseyUrl = `${neptuneSettings.pluginUrl}assets/images/marsey.png`;
+    const whosbroUrl = `${neptuneSettings.pluginUrl}assets/images/whosbro.gif`;
 
     const emojiBar = document.createElement('div');
     emojiBar.className = 'neptune-emoji-bar';
@@ -172,9 +173,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const time = msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
         
         let parsedText = escapeHtml(msg.text);
+
         const naviStickerHtml = `<img src="${naviUrl}" alt="Navi" class="neptune-chat-sticker" style="width: 28px; height: 28px; vertical-align: middle; display: inline-block;" />`;
         const marseyStickerHtml = `<img src="${marseyUrl}" alt="Marsey" class="neptune-chat-sticker" style="width: 28px; height: 28px; vertical-align: middle; display: inline-block;" />`;
         
+        // Remplacement du tag court [whosbro:pseudo] par le texte système et l'image GIF
+        parsedText = parsedText.replace(/\[whosbro:(.*?)\]/g, (match, p1) => {
+            return `<span style="color:#00d2ff; font-style:italic;">[Système] Regardez ${escapeHtml(p1)} :</span><br><img src="${whosbroUrl}" alt="whosbro" style="max-width: 200px; border-radius: 8px; border: 1px solid #30363d; margin-top: 6px; display: block;" />`;
+        });
+
         parsedText = parsedText.replace(/\[navi\]/g, naviStickerHtml);
         parsedText = parsedText.replace(/\[marsey\]/g, marseyStickerHtml);
 
@@ -307,7 +314,39 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // 6. Envoi d'un message classique
+        // 6. Commande : /whosbro ou /rdm [pseudo] sécurisée
+        if (lowerText.startsWith('/whosbro ') || lowerText.startsWith('/rdm ')) {
+            const targetUser = text.replace(/^\/(whosbro|rdm)\s+/, '').trim();
+            if (targetUser) {
+                // On envoie un tag court propre qui passera l'API REST sans être bloqué
+                const commandMessage = `[whosbro:${targetUser}]`;
+                
+                fetch(`${neptuneSettings.restUrl}chat`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'X-WP-Nonce': neptuneSettings.nonce 
+                    },
+                    body: JSON.stringify({ 
+                        room: currentRoom, 
+                        text: commandMessage, 
+                        pseudonym: currentPseudo 
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Erreur lors de l\'envoi de la commande');
+                    return response.json();
+                })
+                .then(() => {
+                    chatInput.value = '';
+                    loadMessages();
+                })
+                .catch(err => console.error('Erreur :', err));
+            }
+            return;
+        }
+
+        // 7. Envoi d'un message classique
         fetch(`${neptuneSettings.restUrl}chat`, {
             method: 'POST',
             headers: { 
@@ -336,6 +375,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function escapeHtml(str) {
+        if (!str) return '';
         return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
