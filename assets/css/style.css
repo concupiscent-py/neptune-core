@@ -1,0 +1,346 @@
+/* ==========================================================================
+   NEPTUNE CORE - STYLE GLOBAL UNIFIÉ
+   ========================================================================== */
+
+body.home, body.page {
+    background-color: #050505 !important;
+    color: #e0e0e0 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Container d'accueil (background.jpg) --- */
+.neptune-home-container {
+    position: relative;
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 60px 40px;
+    background: linear-gradient(135deg, rgba(10,10,10,0.85), rgba(15,15,15,0.75)), url('../images/background.jpg') no-repeat center center;
+    background-size: cover;
+    border: 1px solid #222;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
+    overflow: hidden;
+}
+
+.neptune-home-avatar-box img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #00d2ff;
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.neptune-home-container h1, 
+.neptune-subtitle, 
+.neptune-features-grid, 
+.neptune-actions {
+    position: relative;
+    z-index: 2;
+}
+
+.neptune-home-container h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+}
+
+.neptune-subtitle {
+    color: #ccc;
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+}
+
+/* --- Grille de fonctionnalités --- */
+.neptune-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+.neptune-feature-card {
+    background: rgba(18, 18, 18, 0.75);
+    backdrop-filter: blur(5px);
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 25px;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.neptune-feature-card:hover {
+    transform: translateY(-3px);
+    border-color: #00d2ff;
+}
+
+.neptune-feature-card h3 {
+    color: #ffffff;
+    font-size: 1.15rem;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.neptune-feature-card p {
+    color: #ccc;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.neptune-feature-card code {
+    background: #1f1f1f;
+    color: #00d2ff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+/* --- Bouton principal --- */
+.neptune-actions {
+    margin-top: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.neptune-btn-main {
+    background: #ffffff;
+    color: #000000;
+    padding: 14px 35px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 700;
+    display: inline-block;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+.neptune-btn-main:hover {
+    background: #00d2ff;
+    color: #000000;
+    transform: translateY(-2px);
+}
+
+/* --- Styles pour les pages secondaires (Galerie, etc.) --- */
+.neptune-page-container {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 50px;
+    background: #0d0d0d;
+    border: 1px solid #222;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    text-align: center;
+}
+
+.neptune-page-container h1 {
+    font-size: 2.5rem;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.neptune-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+    text-align: left;
+}
+
+.neptune-gallery-item {
+    background: #141414;
+    border: 1px solid #333;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.neptune-gallery-item:hover {
+    transform: translateY(-3px);
+    border-color: #00d2ff;
+}
+
+.neptune-gallery-item img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.neptune-gallery-caption {
+    padding: 15px;
+    font-weight: 600;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.neptune-content-box {
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 30px;
+    margin-top: 30px;
+    text-align: left;
+    line-height: 1.6;
+    color: #bbb;
+}
+
+/* --- Motifs Dark & Cyberpunk pour la page À propos --- */
+.neptune-about-dark-motifs {
+    position: relative;
+    background: linear-gradient(135deg, rgba(8,8,8,0.98), rgba(15,15,15,0.92)), 
+                radial-gradient(circle at 20% 20%, rgba(0, 210, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(120, 0, 255, 0.05) 0%, transparent 40%),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0, rgba(255,255,255,0.01) 2px, transparent 0, transparent 4px);
+    border: 1px solid #00d2ff33 !important;
+    box-shadow: 0 0 25px rgba(0, 210, 255, 0.15), inset 0 0 15px rgba(0,0,0,0.8) !important;
+}
+
+/* --- Avatar dans le chat --- */
+.neptune-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #00d2ff;
+}
+
+/* --- Boîte de chat (chat-bg.jpg lumineux) --- */
+.neptune-chat-wrapper {
+    position: relative;
+    background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.6)), url('../images/chat-bg.jpg') no-repeat center center;
+    background-size: cover;
+    color: #ffffff;
+    border: 1px solid #444;
+    border-radius: 12px;
+    max-width: 1050px;
+    margin: 40px auto;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+}
+
+.neptune-chat-header, 
+.neptune-chat-box, 
+.neptune-chat-form-box {
+    position: relative;
+    z-index: 2;
+}
+
+.neptune-chat-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 15px;
+    font-weight: 600;
+}
+
+.neptune-chat-header strong {
+    color: #00d2ff;
+}
+
+.neptune-chat-box {
+    background: rgba(0, 0, 0, 0.75) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    border-radius: 8px;
+    height: 500px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.neptune-chat-message {
+    margin-bottom: 12px;
+    line-height: 1.5;
+    font-size: 1.1rem;
+}
+
+.neptune-chat-form-box {
+    display: flex;
+    gap: 10px;
+}
+
+.neptune-chat-form-box input[type="text"] {
+    flex: 1;
+    padding: 12px 16px;
+    background: rgba(10, 10, 10, 0.85) !important;
+    border: 1px solid #555 !important;
+    color: #ffffff !important;
+    border-radius: 8px;
+    outline: none;
+}
+
+.neptune-chat-form-box input[type="text"]:focus {
+    border-color: #00d2ff !important;
+}
+
+.neptune-chat-form-box button {
+    padding: 12px 24px;
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: none;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.neptune-chat-form-box button:hover {
+    background: #00d2ff !important;
+}
+
+/* ==========================================================================
+   EFFET D'ÉCRAN ENSANGLANTÉ POUR LA COMMANDE /wdp
+   ========================================================================== */
+#neptune-blood-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    pointer-events: none !important;
+    background: radial-gradient(circle, rgba(138, 3, 3, 0) 30%, rgba(120, 0, 0, 0.9) 90%), 
+                rgba(90, 0, 0, 0.6) !important;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out !important;
+    z-index: 999999 !important;
+}
+
+#neptune-blood-overlay.active {
+    opacity: 1 !important;
+}
+
+/* Effet arc-en-ciel / multicolore plein écran pour la commande /gay */
+#neptune-rainbow-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 99999;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    background: linear-gradient(45deg, rgba(255,0,0,0.4), rgba(255,165,0,0.4), rgba(255,255,0,0.4), rgba(0,128,0,0.4), rgba(0,0,255,0.4), rgba(75,0,130,0.4), rgba(238,130,238,0.4));
+    background-size: 400% 400%;
+}
+
+#neptune-rainbow-overlay.active {
+    opacity: 1;
+    animation: neptuneRainbowAnim 2s ease infinite;
+}
+
+@keyframes neptuneRainbowAnim {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
