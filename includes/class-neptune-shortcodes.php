@@ -136,7 +136,7 @@ class Neptune_Shortcodes {
 
             <div class="neptune-content-box">
                 <div class="neptune-about-image-wrapper" style="margin-bottom: 25px;">
-                    <img src="<?php echo esc_url( $about_img_url ); ?>" alt="À propos de Neptune" class="neptune-about-img" style="max-width: 100%; border-radius: 8px;" />
+                    <img src="<?php echo esc_url( $about_img_url ); ?>" alt="À propos de Neptune" class="neptune-about-img" />
                 </div>
                 <p>Neptune Core est né de la volonté de créer un espace web intimiste, sombre et hautement interactif. Conçu sur-mesure pour s'affranchir des regles, il fusionne esthétique et communication en temps réel.</p>
                 <p>Rejoignez la communauté, discutez dans les salons isolés et profitez d'une expérience visuelle soignée comme donk XD.</p>

@@ -1,15 +1,15 @@
 <?php
 /**
-* Plugin Name: Neptune Core
-* Description: Secure plugin featuring dark-mode, avatar, multi-room chat, and styled pages.
-* Version: 1.4.1
-* Author: Neptune
-* License: GPLv2+
+- Plugin Name: Neptune Core
+- Description: Secure plugin featuring dark-mode, avatar, multi-room chat, and styled pages.
+- Version: 1.4.3
+- Author: Neptune
+- License: GPLv2+
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'NEPTUNE_VERSION', '1.4.1' );
+define( 'NEPTUNE_VERSION', '1.4.3' );
 define( 'NEPTUNE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'NEPTUNE_URL', plugin_dir_url( __FILE__ ) );
 
@@ -63,11 +63,12 @@ add_action( 'init', function() {
     }
 });
 
-// Enregistrement des scripts et styles frontend du chat
+// Enregistrement des scripts et styles frontend du chat (Ouvert à tous)
 add_action( 'wp_enqueue_scripts', function() {
     wp_enqueue_style( 'neptune-style', NEPTUNE_URL . 'assets/css/style.css', array(), NEPTUNE_VERSION, 'all' );
     wp_enqueue_script( 'neptune-chat', NEPTUNE_URL . 'assets/js/chat.js', array(), NEPTUNE_VERSION, true );
     
+    // Si l'utilisateur est connecté, on récupère son pseudo, sinon "Membre" par défaut
     $current_user = wp_get_current_user();
     $pseudo = ( $current_user && $current_user->exists() ) ? $current_user->display_name : 'Membre';
 

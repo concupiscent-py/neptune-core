@@ -204,6 +204,16 @@ body.home, body.page {
     box-shadow: 0 0 25px rgba(0, 210, 255, 0.15), inset 0 0 15px rgba(0,0,0,0.8) !important;
 }
 
+/* --- Style de l'image about.jpg (entière et dimensionnée confortablement) --- */
+.neptune-about-img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 600px !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: 0 auto !important;
+}
+
 /* --- Avatar dans le chat --- */
 .neptune-avatar {
     width: 38px;

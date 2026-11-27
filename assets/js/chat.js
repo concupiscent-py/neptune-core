@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <li><code>/join [salon]</code> : Change de salon de discussion.</li>
                     <li><code>/clear</code> : Efface l'historique du salon actuel.</li>
                     <li><code>/whosbro [pseudo]</code> ou <code>/rdm [pseudo]</code> : Affiche le GIF personnalisé.</li>
-                    <li><code>/tp wpd</code> : Téléporte / redirige vers un lien fixe.</li>
+                
                     <li><code>/rdm tp</code> : Téléporte vers un lien aléatoire rigolo !</li>
                     <li><code>/musique [url]</code> : Partage un lien de musique cliquable.</li>
                     <li><code>/me [action]</code> : Envoie une action textuelle.</li>
@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // --- COMMANDE : /tp wpd (Redirection vers un lien fixe) ---
         if (lowerText === '/tp wpd' || lowerText === '/tpwpd') {
             chatInput.value = '';
-            const targetUrl = 'https://exemple.com'; 
+            const targetUrl = 'https://watchpeopledie.tv/home'; 
             window.open(targetUrl, '_blank');
             return;
         }
